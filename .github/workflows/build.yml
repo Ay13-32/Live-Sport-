@@ -18,19 +18,12 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
-
-    - name: Build with Gradle
+    - name: Generate Gradle Wrapper & Build APK
       run: |
-        echo "sdk.dir=$ANDROID_HOME" > local.properties
-        gradle wrapper || true
-        if [ -f "./gradlew" ]; then
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
-        else
-          mvn clean install || true
-        fi
+        gradle wrapper --gradle-version 8.5
+        chmod +x gradlew
+        echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+        ./gradlew assembleDebug --no-daemon
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
